@@ -1,7 +1,10 @@
 import requests
-from decouple import config
+import os
+from dotenv import load_dotenv
 
-ELEVEN_LABS_API_KEY = config("ELEVEN_LABS_API_KEY")
+load_dotenv()
+
+ELEVEN_LABS_API_KEY = os.environ.get("ELEVEN_LABS_API_KEY")
 
 # Eleven Labs
 # Convert text to speech

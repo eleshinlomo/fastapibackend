@@ -9,11 +9,15 @@ Make sure Docker Desktop is running
 
 Build Docker Contianer first using any container name. "backend" was used as example.
 
-docker build -t backend .
+IMPORTANT Update your ENV Variables(without '') in the Dockerfile before building the backend
+
+Copy below command to build 
+
+docker build -t backend --no-cache .
 
 After building, run it by Copying and pasting command below into terminal
 
-docker run -it -p 8000:8000 backend
+docker run -t -p 8000:8000 backend
 
 Your backend should be live.
 

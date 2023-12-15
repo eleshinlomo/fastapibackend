@@ -52,6 +52,10 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root():
+    return {"message": "The server is running fine"}
+
 # Check health
 @app.get("/health")
 async def check_health():

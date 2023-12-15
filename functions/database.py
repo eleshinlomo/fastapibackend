@@ -47,7 +47,7 @@ def get_recent_messages():
 
 
 # Save messages for retrieval later on
-def store_messages(request_message, response_message):
+def store_messages(message_decoded, chat_response):
 
   # Define the file name
   file_name = "stored_data.json"
@@ -56,14 +56,15 @@ def store_messages(request_message, response_message):
   messages = get_recent_messages()[1:]
 
   # Add messages to data
-  user_message = {"role": "user", "content": request_message}
-  assistant_message = {"role": "assistant", "content": response_message}
+  user_message = {"role": "user", "content": message_decoded}
+  assistant_message = {"role": "assistant", "content": chat_response}
   messages.append(user_message)
   messages.append(assistant_message)
 
   # Save the updated file
   with open(file_name, "w") as f:
     json.dump(messages, f)
+  return
 
 
 # Save messages for retrieval later on
@@ -74,3 +75,4 @@ def reset_messages():
 
   # Write an empty file
   open(file_name, "w")
+  return

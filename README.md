@@ -17,7 +17,10 @@ docker build -t backend --no-cache .
 
 After building, run it by Copying and pasting command below into terminal
 
-docker run -t -p 8000:8000 backend
+
+docker run --env-file .env -p 8000:8000 backend
+
+
 
 Your backend should be live.
 

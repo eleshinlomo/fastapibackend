@@ -17,8 +17,9 @@ docker build -t backend --no-cache .
 
 After building, run it by Copying and pasting command below into terminal
 
+docker compose -f docker-compose-dev.yml up --build
 
-docker run --env-file .env -p 8000:8000 backend
+docker run -it  -p 8000:8000 backend
 
 
 

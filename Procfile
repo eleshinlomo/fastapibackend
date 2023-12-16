@@ -1,1 +1,1 @@
-web: gunicorn clientproject.wsgi --bind 0.0.0.0:$PORT
+web: uvicorn main:app --bind 0.0.0.0:$PORT

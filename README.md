@@ -18,7 +18,7 @@ OPEN_AI_ORG='xxxxx'
 OPEN_AI_KEY='xxxxx'
 ELEVEN_LABS_API_KEY='xxxxx'
 
-pip install requirements.txt
+pip install -r requirements.txt
 
 start the backend with command below
 

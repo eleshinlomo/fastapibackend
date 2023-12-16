@@ -4,11 +4,13 @@ New Intructions
 To Start Backend 
 
 
-
-
 create venv with code below
 
 python3 -m venv myvenv
+
+start venv with code below
+
+myvenv/Scripts/activate
 
 cd backend
 

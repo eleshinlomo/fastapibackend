@@ -5,10 +5,12 @@ To Start Backend with Docker locally
 
 
 
-cd backend
+
 create venv with code below
 
 python3 -m venv myvenv
+
+cd backend
 
 Create .env file in the backend root folder and set your variables as follows
 

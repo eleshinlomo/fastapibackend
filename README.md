@@ -1,7 +1,7 @@
 
 New Intructions
 
-To Start Backend with Docker locally
+To Start Backend 
 
 
 

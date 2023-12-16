@@ -18,6 +18,8 @@ OPEN_AI_ORG='xxxxx'
 OPEN_AI_KEY='xxxxx'
 ELEVEN_LABS_API_KEY='xxxxx'
 
+pip install requirements.txt
+
 start the backend with command below
 
 uvicorn main:app --reload

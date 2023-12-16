@@ -38,4 +38,4 @@ def convert_text_to_speech(message):
         return response.content
   else:
     
-    return {"message": "issue with content response"}
+    return {"message": "issue converting text to speech with eleven labs"}

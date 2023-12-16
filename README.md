@@ -3,38 +3,22 @@ New Intructions
 
 To Start Backend with Docker locally
 
-cd backend 
-
-Make sure Docker Desktop is running
-
-Build Docker Contianer first using any container name. "backend" was used as example.
-
-IMPORTANT Update your ENV Variables(without '') in the Dockerfile before building the backend
-
-Copy below command to build 
-
-docker build -t backend --no-cache .
-
-After building, run it by Copying and pasting command below into terminal
-
-docker compose -f docker-compose-dev.yml up --build
-
-docker run -it  -p 8000:8000 backend
 
 
+cd backend
+create venv with code below
 
-Your backend should be live.
+python3 -m venv myvenv
 
+Create .env file in the backend root folder and set your variables as follows
 
-To stop docker containers, first check all containers running using command below
+OPEN_AI_ORG='xxxxx'
+OPEN_AI_KEY='xxxxx'
+ELEVEN_LABS_API_KEY='xxxxx'
 
-docker ps
+start the backend with command below
 
-copy the container id you want to stop which looks somthing like this "013b5e703575"
-
-then docker stop "container id" 
-
-change container id to the id you copied.
+uvicorn main:app --reload
 
 
 

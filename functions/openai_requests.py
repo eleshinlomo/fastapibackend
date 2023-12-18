@@ -27,7 +27,7 @@ def convert_audio_to_text(audio_file):
 # Convert audio to text
 def get_chat_response(decoded_message):
     messages = get_recent_messages()
-    user_message = {"role": "user", "content": decoded_message + " Only say two or 3 words in Spanish if speaking in Spanish. The remaining words should be in English"}
+    user_message = {"role": "user", "content": decoded_message}
     messages.append(user_message)
     print(messages)
 

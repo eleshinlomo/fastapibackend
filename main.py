@@ -71,7 +71,7 @@ async def reset_conversation():
 
 # Post bot response
 # Note: Not playing back in browser when using post request.
-@app.post("/post-audio")
+@app.post("/api/post-audio")
 async def post_audio(file: UploadFile = File(...)):
 
     try:    

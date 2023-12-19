@@ -3,6 +3,7 @@
 
 # Main imports
 import os
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
@@ -84,7 +85,7 @@ async def post_audio(file: UploadFile = File(...)):
 
         # Decode audio
         message_decoded = convert_audio_to_text(audio_input)
-
+        print({"decoded_message": message_decoded})
         # Guard: Ensure output
         if not message_decoded:
             raise HTTPException(status_code=400, detail="Failed to decode audio")
@@ -106,9 +107,17 @@ async def post_audio(file: UploadFile = File(...)):
         if not audio_output:
             raise HTTPException(status_code=400, detail="Failed audio output")
 
-        # Return the user's audio response as a streaming response
-        return StreamingResponse(iter([audio_output]), media_type="application/octet-stream")
         
+       # Add additional information in headers
+        response.headers["user_message"] = message_decoded
+        response.headers["other_data"] = "Additional information goes here"
+        
+       # Return the user's audio response as a streaming response
+        response = StreamingResponse(iter([audio_output]), media_type="application/octet-stream")
+
+        
+
+        return response
     except Exception as e:
         # Log the exception traceback
         traceback_str = traceback.format_exc()

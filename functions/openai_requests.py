@@ -29,7 +29,6 @@ def get_chat_response(decoded_message):
     messages = get_recent_messages()
     user_message = {"role": "user", "content": decoded_message}
     messages.append(user_message)
-    print(messages)
 
     try:
         response = openai.ChatCompletion.create(

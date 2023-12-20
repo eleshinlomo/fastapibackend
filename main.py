@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 
 # Custom function imports
 from functions.text_to_speech import convert_text_to_speech
-from functions.openai_requests import convert_audio_to_text, get_chat_response
+from functions.openai_requests import get_chat_response
+from functions.transcriber import transcribe
 from functions.database import store_messages, reset_messages
 
 
@@ -84,7 +85,7 @@ async def post_audio(file: UploadFile = File(...)):
         audio_input = open(file.filename, "rb")
 
         # Decode audio
-        message_decoded = convert_audio_to_text(audio_input)
+        message_decoded = transcribe(audio_input)
         print({"decoded_message": message_decoded})
         # Guard: Ensure output
         if not message_decoded:
@@ -126,8 +127,29 @@ async def post_audio(file: UploadFile = File(...)):
         # Return the full traceback in the response
         return {"error": traceback_str}
     
-      
 
-    
+# Transcriber api
+@app.post('/transcriber')
+def transcribe_audio(file: UploadFile = File(...)):
+    try:    
+        # Convert audio to text - production
+        # Save the file temporarily
+        
+        with open(file.filename, "wb") as buffer:
+            buffer.write(file.file.read())
+        audio_input = open(file.filename, "rb")
+
+        # Decode audio
+        transcribed_message = transcribe(audio_input)
+        print({"decoded_message": transcribed_message})
+        # Guard: Ensure output
+        if not transcribed_message:
+            raise HTTPException(status_code=400, detail="Failed to decode audio")
+        else:
+            return transcribed_message
+    except Exception as e:
+        return str(e)
+
+
 
     

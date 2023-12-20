@@ -6,7 +6,7 @@ import os
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import openai
 import traceback
@@ -22,8 +22,10 @@ logger = logging.getLogger(__name__)
 # Custom function imports
 from functions.text_to_speech import convert_text_to_speech
 from functions.openai_requests import get_chat_response
-from functions.transcriber import transcribe
+from functions.elevenlabs_transcriber import elevenlabs_transcribe
 from functions.database import store_messages, reset_messages
+from functions.google_text_to_speech import text_to_speech
+from functions.google_speech_to_text import audio_to_text
 
 
 # Get Environment Vars
@@ -80,12 +82,8 @@ async def post_audio(file: UploadFile = File(...)):
         # Convert audio to text - production
         # Save the file temporarily
         
-        with open(file.filename, "wb") as buffer:
-            buffer.write(file.file.read())
-        audio_input = open(file.filename, "rb")
-
-        # Decode audio
-        message_decoded = transcribe(audio_input)
+        audio_input = file.file
+        message_decoded = audio_to_text(audio_input)
         print({"decoded_message": message_decoded})
         # Guard: Ensure output
         if not message_decoded:
@@ -102,23 +100,16 @@ async def post_audio(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Failed chat response")
 
         # Convert chat response to audio
-        audio_output = convert_text_to_speech(chat_response)
+        audio_output = text_to_speech(chat_response)
 
         # Guard: Ensure output
         if not audio_output:
             raise HTTPException(status_code=400, detail="Failed audio output")
 
         
-       # Add additional information in headers
-        response.headers["user_message"] = message_decoded
-        response.headers["other_data"] = "Additional information goes here"
-        
        # Return the user's audio response as a streaming response
-        response = StreamingResponse(iter([audio_output]), media_type="application/octet-stream")
+        return FileResponse(audio_output, media_type="audio/mpeg", filename="output.mp3")
 
-        
-
-        return response
     except Exception as e:
         # Log the exception traceback
         traceback_str = traceback.format_exc()
@@ -129,24 +120,29 @@ async def post_audio(file: UploadFile = File(...)):
     
 
 # Transcriber api
-@app.post('/transcriber')
+@app.post('/api/transcriber')
 def transcribe_audio(file: UploadFile = File(...)):
     try:    
         # Convert audio to text - production
         # Save the file temporarily
         
-        with open(file.filename, "wb") as buffer:
-            buffer.write(file.file.read())
-        audio_input = open(file.filename, "rb")
-
-        # Decode audio
-        transcribed_message = transcribe(audio_input)
-        print({"decoded_message": transcribed_message})
+        file_name = file.filename
+        file_ext = file_name.split('.')[-1].lower()
+        print(file_ext)
+        accepted_audio_files = ["wav", "mp3", "mpeg"]
+        
+        if file_ext not in accepted_audio_files:
+                raise HTTPException(status_code=400, detail=f"{file.filename} not acceptable. Has to be audio") 
+        else:
+            audio_input = file.file
+                # Decode audio
+            transcribed_text = audio_to_text(audio_input)
+        print({"decoded_message": transcribed_text})
         # Guard: Ensure output
-        if not transcribed_message:
+        if not transcribed_text:
             raise HTTPException(status_code=400, detail="Failed to decode audio")
         else:
-            return transcribed_message
+                return transcribed_text
     except Exception as e:
         return str(e)
 

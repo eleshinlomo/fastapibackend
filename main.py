@@ -4,7 +4,6 @@
 # Main imports
 import os
 import wave
-import soundfile as sf
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException

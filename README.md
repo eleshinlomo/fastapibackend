@@ -12,6 +12,8 @@ start venv with code below
 
 myvenv/Scripts/activate
 
+to be modified
+
 cd backend
 
 Create .env file in the backend root folder and set your variables as follows

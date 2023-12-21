@@ -25,8 +25,7 @@ from functions.google_text_to_speech import text_to_speech
 from functions.openai_requests import get_chat_response
 from functions.elevenlabs_transcriber import elevenlabs_transcribe
 from functions.database import store_messages, reset_messages
-from functions.google_text_to_speech import text_to_speech
-from functions.google_speech_to_text import speech_to_text
+from functions.whisper_speech_to_text import convert_audio_to_text
 
 
 # Get Environment Vars
@@ -83,8 +82,15 @@ async def post_audio(file: UploadFile = File(...)):
         # Convert audio to text - production
         # Save the file temporarily
         
-        audio_input = file.file
-        message_decoded = speech_to_text(audio_input)
+        with open(file.filename, 'wb') as audio_path:
+             audio_path.write(file.file.read())
+
+        audio_input = open(file.filename, 'rb')
+
+             
+             
+        print(audio_input.name)
+        message_decoded = convert_audio_to_text(audio_input)
         print({"decoded_message": message_decoded})
         # Guard: Ensure output
         if not message_decoded:
@@ -107,7 +113,7 @@ async def post_audio(file: UploadFile = File(...)):
         if not audio_output:
             raise HTTPException(status_code=400, detail="Failed audio output")
 
-        
+
        # Return the user's audio response as a streaming response
         return FileResponse(audio_output, media_type="audio/mpeg", filename="output.mp3")
 
@@ -122,22 +128,27 @@ async def post_audio(file: UploadFile = File(...)):
 
 # Transcriber api
 @app.post('/api/transcriber')
-def transcribe_audio(file: UploadFile = File(...)):
+def transcribe_audio(audiofile: UploadFile = File(...)):
     try:    
         # Convert audio to text - production
         # Save the file temporarily
         
-        file_name = file.filename
+        with open(audiofile.filename, 'wb') as audio_path:
+             audio_path.write(audiofile.file.read())
+
+        audio_to_transcribe = open(audiofile.filename, 'rb')
+
+        file_name= audiofile.filename
         file_ext = file_name.split('.')[-1].lower()
         print(file_ext)
         accepted_audio_files = ["wav", "mp3", "mpeg"]
         
         if file_ext not in accepted_audio_files:
-                raise HTTPException(status_code=400, detail=f"{file.filename} not acceptable. Has to be audio") 
+                raise HTTPException(status_code=400, detail=f"{audiofile.filename} not acceptable. Has to be audio") 
         else:
-            audio_input = file.file
+            
                 # Decode audio
-            transcribed_text = speech_to_text(audio_input)
+            transcribed_text = convert_audio_to_text(audio_to_transcribe)
         print({"decoded_message": transcribed_text})
         # Guard: Ensure output
         if not transcribed_text:

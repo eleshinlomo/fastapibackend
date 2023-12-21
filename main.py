@@ -3,6 +3,8 @@
 
 # Main imports
 import os
+import wave
+import soundfile as sf
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -20,12 +22,12 @@ logger = logging.getLogger(__name__)
 
 
 # Custom function imports
-from functions.text_to_speech import convert_text_to_speech
+from functions.google_text_to_speech import text_to_speech
 from functions.openai_requests import get_chat_response
 from functions.elevenlabs_transcriber import elevenlabs_transcribe
 from functions.database import store_messages, reset_messages
 from functions.google_text_to_speech import text_to_speech
-from functions.google_speech_to_text import audio_to_text
+from functions.google_speech_to_text import speech_to_text
 
 
 # Get Environment Vars
@@ -83,7 +85,7 @@ async def post_audio(file: UploadFile = File(...)):
         # Save the file temporarily
         
         audio_input = file.file
-        message_decoded = audio_to_text(audio_input)
+        message_decoded = speech_to_text(audio_input)
         print({"decoded_message": message_decoded})
         # Guard: Ensure output
         if not message_decoded:
@@ -136,7 +138,7 @@ def transcribe_audio(file: UploadFile = File(...)):
         else:
             audio_input = file.file
                 # Decode audio
-            transcribed_text = audio_to_text(audio_input)
+            transcribed_text = speech_to_text(audio_input)
         print({"decoded_message": transcribed_text})
         # Guard: Ensure output
         if not transcribed_text:

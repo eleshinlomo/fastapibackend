@@ -2,15 +2,15 @@ import io
 import speech_recognition as sr
 from pydub import AudioSegment
 
-def audio_to_text(audio_input,  language='en-US'):
+def speech_to_text(audio_input,  language='en-US'):
     recognizer = sr.Recognizer()
 
     try:
-        # Convert the SpooledTemporaryFile to a BytesIO object
-        audio_data = io.BytesIO(audio_input.read())
+        # # Convert the SpooledTemporaryFile to a BytesIO object
+        # audio_data = io.BytesIO(audio_input.read())
 
         # Load audio file using pydub
-        audio = AudioSegment.from_file(audio_data)
+        audio = AudioSegment.from_file(audio_input)
         
 
         # Export audio as WAV (a common format)

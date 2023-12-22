@@ -2,7 +2,7 @@
 
 # Source the .env file if it exists
 if [ -f ".env" ]; then
-    source .env
+    source /app/.env
 fi
 
 uvicorn main:app --reload \

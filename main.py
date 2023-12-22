@@ -3,6 +3,8 @@
 
 # Main imports
 import os
+import soundfile as sf
+import io
 import wave
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
@@ -12,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import openai
 import traceback
 import logging
+from pydub import AudioSegment
 
 load_dotenv()
 
@@ -126,37 +129,37 @@ async def post_audio(file: UploadFile = File(...)):
         return {"error": traceback_str}
     
 
+
+
+
+
+
 # Transcriber api
 @app.post('/api/transcriber')
 def transcribe_audio(audiofile: UploadFile = File(...)):
-    try:    
-        # Convert audio to text - production
+    try:
         # Save the file temporarily
         
         with open(audiofile.filename, 'wb') as audio_path:
-             audio_path.write(audiofile.file.read())
-
-        audio_to_transcribe = open(audiofile.filename, 'rb')
-
-        file_name= audiofile.filename
-        file_ext = file_name.split('.')[-1].lower()
-        print(file_ext)
-        accepted_audio_files = ["wav", "mp3", "mpeg"]
+            audio_path.write(audiofile.file.read())
         
-        if file_ext not in accepted_audio_files:
-                raise HTTPException(status_code=400, detail=f"{audiofile.filename} not acceptable. Has to be audio") 
-        else:
-            
-                # Decode audio
-            transcribed_text = convert_audio_to_text(audio_to_transcribe)
+        audio_data = open(audiofile.filename, 'rb')
+
+       
+
+        # Transcribe the audio
+        transcribed_text = convert_audio_to_text(audio_data)
+
         print({"decoded_message": transcribed_text})
+
         # Guard: Ensure output
         if not transcribed_text:
             raise HTTPException(status_code=400, detail="Failed to decode audio")
         else:
-                return transcribed_text
+            return transcribed_text
     except Exception as e:
         return str(e)
+
 
 
 

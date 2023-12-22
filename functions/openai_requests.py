@@ -35,4 +35,4 @@ def get_chat_response(decoded_message):
             return {"error": "Unexpected response type"}
 
     except Exception as e:
-        return 
+        return str(e) 

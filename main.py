@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import openai
 import traceback
 import logging
-from pydub import AudioSegment
+
 
 load_dotenv()
 

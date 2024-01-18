@@ -3,9 +3,7 @@
 
 # Main imports
 import os
-import soundfile as sf
 import io
-import wave
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -46,6 +44,7 @@ origins = [
     "http://localhost:5174",
     "http://localhost:4173",
     "http://localhost:3000",
+    "http://localhost:3001",
 ]
 
 

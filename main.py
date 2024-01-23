@@ -4,9 +4,10 @@
 # Main imports
 import os
 import io
+import uvicorn
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import openai
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 # Custom function imports
-from functions.google_text_to_speech import text_to_speech
+from functions.google_text_to_speech import google_text_to_speech_converter
 from functions.openai_requests import get_chat_response
 from functions.elevenlabs_transcriber import elevenlabs_transcribe
 from functions.database import store_messages, reset_messages
@@ -109,7 +110,7 @@ async def post_audio(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Failed chat response")
 
         # Convert chat response to audio
-        audio_output = text_to_speech(chat_response)
+        audio_output = google_text_to_speech_converter(chat_response)
 
         # Guard: Ensure output
         if not audio_output:
@@ -133,8 +134,8 @@ async def post_audio(file: UploadFile = File(...)):
 
 
 
-# Transcriber api
-@app.post('/api/transcriber')
+# Voice to Text api
+@app.post('/api/voicetotext')
 def transcribe_audio(audiofile: UploadFile = File(...)):
     try:
         # Save the file temporarily
@@ -155,9 +156,38 @@ def transcribe_audio(audiofile: UploadFile = File(...)):
         if not transcribed_text:
             raise HTTPException(status_code=400, detail="Failed to decode audio")
         else:
-            return transcribed_text
+            return {"data": transcribed_text, "ok": True}
     except Exception as e:
-        return str(e)
+        return {"error": str(e), "ok": False}
+    
+
+    
+# Text to voice api
+@app.post('/api/texttovoice')
+async def convert_text_to_audio(request: Request):
+
+    payload = await request.json()
+    text = payload.get('text_message')
+    
+    try:
+
+        # Conveet text to audio
+        if text:
+            print({"Your text": text})
+            audio = google_text_to_speech_converter(text)
+
+            # Guard: Ensure output
+            if not audio:
+                raise Exception("Failed to decode audio")
+            else:
+               # Return the user's audio response as a streaming response
+                return FileResponse(audio, media_type="audio/mpeg", filename="output.mp3")
+        else:
+            raise Exception("Text not found")
+    except Exception as e:
+        return {"error": str(e), "ok": False}
+    
+
 
 
 

@@ -25,5 +25,5 @@ def generate_image(payload:str, resolution):
       image_url = response.data[0].url
       return image_url
   except Exception as e:
-     return e
+     return str(e)
 

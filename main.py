@@ -2,7 +2,7 @@
 # uvicorn main:app --reload
 # Main imports
 import os
-import io
+import requests
 from io import BytesIO
 import uvicorn
 from fastapi.responses import JSONResponse
@@ -85,6 +85,20 @@ async def reset_conversation():
     return {"response": "conversation reset"}
 
 
+
+# Get User Profile
+@app.get("/api/loginchecker/")
+async def login_checker():
+    BASE_URL = 'http://localhost:8000/api/loginchecker/'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    try:
+        response = requests.get(BASE_URL, headers=headers)
+        response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
+        return response.json()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/pdftoword")
@@ -226,6 +240,9 @@ class Image_request(BaseModel):
 @app.post('/api/generateimage')
 def handle_image_generator(request: Request, image_request: Image_request):
     try:
+            response = login_checker(request)
+            print(response)
+            
             payload = image_request.payload
             resolution = image_request.resolution
 
@@ -235,14 +252,13 @@ def handle_image_generator(request: Request, image_request: Image_request):
                 print("Payload and resolution not found")
             image_url = generate_image(payload, resolution)
             if image_url:
-                print(image_url)
                 return {"data": image_url, "ok": True}
             else:
                 return {"error": "No image url found", "ok": False}
             
     except Exception as e:
         print(e)
-        return Response({"error": str(e), "ok": False}) 
+        return {"error": str(e), "ok": False} 
 
 
 

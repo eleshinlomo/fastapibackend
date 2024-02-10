@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from langchain.llms import openai
 import traceback
 import logging
+from pydantic import BaseModel
 
 
 load_dotenv()
@@ -21,6 +22,8 @@ load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Images
+from image_fucntions.image_generator import generate_image
 
 # Media function imports
 from functions.google_text_to_speech import google_text_to_speech_converter
@@ -173,8 +176,6 @@ def transcribe_audio(audiofile: UploadFile = File(...)):
         
         audio_data = open(audiofile.filename, 'rb')
 
-       
-
         # Transcribe the audio
         transcribed_text = convert_audio_to_text(audio_data)
 
@@ -217,6 +218,31 @@ async def convert_text_to_audio(request: Request):
     
 
 
+# Images
+class Image_request(BaseModel):
+    payload: str
+    resolution: str
+
+@app.post('/api/generateimage')
+def handle_image_generator(request: Request, image_request: Image_request):
+    try:
+            payload = image_request.payload
+            resolution = image_request.resolution
+
+            if payload is not None and resolution is not None:
+                print({"payload": payload, "resolution": resolution})
+            else:
+                print("Payload and resolution not found")
+            image_url = generate_image(payload, resolution)
+            if image_url:
+                print(image_url)
+                return {"data": image_url, "ok": True}
+            else:
+                return {"error": "No image url found", "ok": False}
+            
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e), "ok": False}) 
 
 
 

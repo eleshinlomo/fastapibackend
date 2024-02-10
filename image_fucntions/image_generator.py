@@ -12,17 +12,18 @@ client = OpenAI(
 )
 
 
-def generate_image():
-  response = client.image.generate(
-    model="dall-e-3",
-    prompt="a white siamese cat",
-    size="1024x1024",
-    quality="standard",
-    n=1,
-    )
+def generate_image(payload:str, resolution):
+  try:
+      response = client.images.generate(
+      model="dall-e-3",
+      prompt=payload,
+      size=resolution,
+      quality="standard",
+      n=1,
+      )
 
-  image_url = response.data[0].url
-  return image_url
+      image_url = response.data[0].url
+      return image_url
+  except Exception as e:
+     return e
 
-url= generate_image()
-print(url)

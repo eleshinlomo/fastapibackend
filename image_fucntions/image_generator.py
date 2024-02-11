@@ -6,10 +6,10 @@ import os
 
 load_dotenv()
 
-client = OpenAI(
+client = OpenAI()
     # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+    # api_key=os.environ.get("OPENAI_API_KEY"),
+
 
 
 def generate_image(payload:str, resolution):

@@ -7,9 +7,9 @@ async def login_checker():
     headers = {
         'Content-Type': 'application/json'
     }
-    
+
     try:
-        response = requests.get(BASE_URL, headers=headers)
+        response = await requests.get(BASE_URL, headers=headers)
         response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
         return response.json()
     except requests.RequestException as e:

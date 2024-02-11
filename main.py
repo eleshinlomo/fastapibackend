@@ -22,6 +22,9 @@ load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Auth Functions
+from auth import login_checker
+
 # Images
 from image_fucntions.image_generator import generate_image
 
@@ -86,19 +89,7 @@ async def reset_conversation():
 
 
 
-# Get User Profile
-@app.get("/api/loginchecker/")
-async def login_checker():
-    BASE_URL = 'http://localhost:8000/api/loginchecker/'
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    try:
-        response = requests.get(BASE_URL, headers=headers)
-        response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
-        return response.json()
-    except requests.RequestException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.post("/api/pdftoword")
@@ -240,7 +231,7 @@ class Image_request(BaseModel):
 @app.post('/api/generateimage')
 def handle_image_generator(request: Request, image_request: Image_request):
     try:
-            response = login_checker(request)
+            response = login_checker()
             print(response)
             
             payload = image_request.payload
@@ -252,6 +243,7 @@ def handle_image_generator(request: Request, image_request: Image_request):
                 print("Payload and resolution not found")
             image_url = generate_image(payload, resolution)
             if image_url:
+                print(image_url)
                 return {"data": image_url, "ok": True}
             else:
                 return {"error": "No image url found", "ok": False}

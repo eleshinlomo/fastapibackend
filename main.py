@@ -36,11 +36,6 @@ from functions.database import store_messages, reset_messages
 from functions.whisper_speech_to_text import convert_audio_to_text
 from functions.openai_text_to_speech import openai_text_to_speech_converter
 
-# Document Functions
-
-from docs_functions.pdftoword import convert_pdf_to_docx
-
-
 
 # Get Environment Vars
 openai.organization = os.environ.get("OPEN_AI_ORG")

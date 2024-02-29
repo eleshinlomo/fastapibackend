@@ -233,12 +233,10 @@ def handle_image_generator(request: Request, image_request: Image_request):
             resolution = image_request.resolution
 
             if payload is not None and resolution is not None:
-                print({"payload": payload, "resolution": resolution})
-            else:
-                print("Payload and resolution not found")
-            image_url = generate_image(payload, resolution)
+                image_url = generate_image(payload, resolution)
+            else: 
+                return {"data": "payload not found", "ok": True}
             if image_url:
-                print(image_url)
                 return {"data": image_url, "ok": True}
             else:
                 return {"error": "No image url found", "ok": False}

@@ -25,8 +25,6 @@ logger = logging.getLogger(__name__)
 # Auth Functions
 from auth import login_checker
 
-# Images
-from image_fucntions.image_generator import generate_image
 
 # Media function imports
 from functions.google_text_to_speech import google_text_to_speech_converter

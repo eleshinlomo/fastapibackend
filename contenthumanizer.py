@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import spacy
 
 load_dotenv()
 client = OpenAI()
@@ -23,3 +24,18 @@ def content_to_generate(prompt: str):
 
 prompt = "Compose a poem that explains the concept of recursion javascript."
 result = content_to_generate(prompt)
+
+
+# Load the English language model
+nlp = spacy.load("en_core_web_sm")
+
+# LLM-generated message
+llm_message = "Your LLM-generated message goes here."
+
+# Process the LLM-generated message using spaCy
+doc = nlp(llm_message)
+
+# Convert spaCy Doc object to natural language (lemmatized tokens)
+natural_language = " ".join([token.lemma_ for token in doc])
+
+print(natural_language)

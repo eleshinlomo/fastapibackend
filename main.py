@@ -218,33 +218,6 @@ async def convert_text_to_audio(request: Request):
     
 
 
-# Images
-class Image_request(BaseModel):
-    payload: str
-    resolution: str
-
-@app.post('/api/generateimage')
-def handle_image_generator(request: Request, image_request: Image_request):
-    try:
-            response = login_checker()
-            print(response)
-            
-            payload = image_request.payload
-            resolution = image_request.resolution
-
-            if payload is not None and resolution is not None:
-                image_url = generate_image(payload, resolution)
-            else: 
-                return {"data": "payload not found", "ok": True}
-            if image_url:
-                return {"data": image_url, "ok": True}
-            else:
-                return {"error": "No image url found", "ok": False}
-            
-    except Exception as e:
-        print(e)
-        return {"error": str(e), "ok": False} 
-
 
 
     
